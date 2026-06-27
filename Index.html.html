@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rituel Pré-Session — MNQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:#08080c;
+  --bg2:#0e0e14;
+  --bg3:#14141c;
+  --bg4:#1a1a24;
+  --border:rgba(255,255,255,0.06);
+  --border-s:rgba(255,255,255,0.12);
+  --t1:#eeeef8;
+  --t2:#8080a0;
+  --t3:#404060;
+  --green:#22c55e;
+  --red:#ef4444;
+  --amber:#f59e0b;
+  --indigo:#6366f1;
+  --accent:#a78bfa;
+  --r:13px;
+  --rs:8px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;line-height:1.6;overflow-x:hidden}
+
+/* ══ CANVAS BG ══ */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
+
+/* ══ SHELL ══ */
+.shell{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2.5rem 1.75rem 5rem}
+
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes glow-green{0%,100%{box-shadow:0 0 12px rgba(34,197,94,.25)}50%{box-shadow:0 0 28px rgba(34,197,94,.55)}}
+@keyframes glow-red{0%,100%{box-shadow:0 0 12px rgba(239,68,68,.25)}50%{box-shadow:0 0 32px rgba(239,68,68,.6)}}
+@keyframes glow-amber{0%,100%{box-shadow:0 0 12px rgba(245,158,11,.2)}50%{box-shadow:0 0 28px rgba(245,158,11,.45)}}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-5px)}30%{transform:translateX(5px)}45%{transform:translateX(-4px)}60%{transform:translateX(4px)}75%{transform:translateX(-2px)}90%{transform:translateX(2px)}}
+@keyframes ripple-out{0%{transform:scale(.5);opacity:1}100%{transform:scale(2.8);opacity:0}}
+@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.7);opacity:.5}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes slide-in-check{from{opacity:0;transform:scale(.5) rotate(-20deg)}to{opacity:1;transform:scale(1) rotate(0deg)}}
+@keyframes fomo-border{0%,100%{border-color:rgba(239,68,68,.2)}50%{border-color:rgba(239,68,68,.7)}}
+@keyframes fomo-text{0%,100%{opacity:1}40%{opacity:.6}}
+@keyframes orb-float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(.97)}}
+
+/* ══ HEADER ══ */
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:.5px solid var(--border);animation:fadeUp .5s ease both}
+h1{font-size:20px;font-weight:500;letter-spacing:-.025em}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);position:relative;transition:background .6s;animation:pulse-dot 2s infinite}
+.live-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1.5px solid var(--red);animation:ripple-out 2s ease-out infinite;transition:border-color .6s}
+.live-dot.ok{background:var(--green);animation:glow-green 2s infinite}
+.live-dot.ok::after{border-color:var(--green)}
+.header-sub{font-size:12px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.header-right{text-align:right}
+.session-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--t3);background:var(--bg3);border:.5px solid var(--border);border-radius:var(--rs);padding:5px 11px;margin-bottom:7px}
+.ready-pill{display:inline-block;font-size:11px;font-weight:600;padding:4px 13px;border-radius:20px;background:rgba(239,68,68,.1);color:var(--red);border:.5px solid rgba(239,68,68,.25);transition:all .5s;letter-spacing:.02em}
+.ready-pill.ok{background:rgba(34,197,94,.1);color:var(--green);border-color:rgba(34,197,94,.3);animation:glow-green 2.5s infinite}
+
+/* ══ PROGRESS ══ */
+.prog-wrap{margin-bottom:2.5rem;animation:fadeUp .4s .06s ease both}
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-label{font-size:10px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.prog-score{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--t2)}
+.prog-track{height:2px;background:var(--bg4);border-radius:99px;overflow:hidden}
+.prog-fill{height:2px;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:99px;width:0%;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* ══ SECTION LABEL ══ */
+.sl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.sl::after{content:'';flex:1;height:.5px;background:var(--border)}
+
+/* ══ CHECKLIST ══ */
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:2.5rem}
+.ci{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:border-color .25s,background .25s,transform .15s;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
+.ci:nth-child(1){animation-delay:.05s}.ci:nth-child(2){animation-delay:.10s}.ci:nth-child(3){animation-delay:.15s}.ci:nth-child(4){animation-delay:.20s}.ci:nth-child(5){animation-delay:.25s}.ci:nth-child(6){animation-delay:.30s}
+.ci::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,rgba(34,197,94,.06) 0%,transparent 65%);opacity:0;transition:opacity .35s}
+.ci:hover{border-color:var(--border-s);transform:translateY(-2px)}
+.ci.done{border-color:rgba(34,197,94,.25);background:rgba(34,197,94,.05);animation:glow-green .5s ease;transform:translateY(0)}
+.ci.done::after{opacity:1}
+.ci.done .ci-title{color:var(--green)}
+.ci.done .ci-box{border-color:var(--green);background:var(--green)}
+.ci.done .ci-box::after{opacity:1;animation:slide-in-check .25s cubic-bezier(.175,.885,.32,1.4) both}
+.ci-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+.ci-box{width:19px;height:19px;border-radius:6px;border:1.5px solid var(--border-s);flex-shrink:0;margin-top:1px;transition:all .2s;position:relative}
+.ci-box::after{content:'';position:absolute;left:5px;top:2px;width:6px;height:10px;border-right:2.5px solid #000;border-bottom:2.5px solid #000;transform:rotate(45deg);opacity:0}
+.ci-title{font-size:13px;font-weight:500;color:var(--t1);transition:color .25s;line-height:1.4}
+.ci-desc{font-size:12px;color:var(--t3);line-height:1.55;padding-left:29px}
+
+/* ══ READY BANNER ══ */
+.ready-banner{display:none;text-align:center;padding:18px;background:rgba(34,197,94,.06);border:.5px solid rgba(34,197,94,.25);border-radius:var(--r);margin-bottom:2.5rem}
+.ready-banner.show{display:block;animation:scaleIn .4s cubic-bezier(.175,.885,.32,1.275) both}
+.rb-title{font-size:15px;font-weight:500;color:var(--green);margin-bottom:4px}
+.rb-sub{font-size:12px;color:#16a34a}
+
+/* ══ FOMO BLOCK ══ */
+.fomo-block{border-radius:var(--r);padding:1.5rem;margin-bottom:2.5rem;border:.5px solid var(--border);background:var(--bg2);transition:border-color .6s;position:relative;overflow:hidden;animation:fadeUp .4s .22s ease both}
+.fomo-block .fomo-bg{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .7s}
+.fomo-block.s-calm{border-color:rgba(34,197,94,.25)}
+.fomo-block.s-calm .fomo-bg{opacity:1;background:radial-gradient(ellipse at 30% 0%,rgba(34,197,94,.08) 0%,transparent 60%)}
+.fomo-block.s-focus{border-color:rgba(99,102,241,.3)}
+.fomo-block.s-focus .fomo-bg{opacity:1;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.1) 0%,transparent 60%)}
+.fomo-block.s-imp{border-color:rgba(245,158,11,.3)}
+.fomo-block.s-imp .fomo-bg{opacity:1;background:radial-gradient(ellipse at 70% 0%,rgba(245,158,11,.09) 0%,transparent 60%)}
+.fomo-block.s-fomo{border-color:rgba(239,68,68,.4);animation:fomo-border 1.2s ease-in-out infinite}
+.fomo-block.s-fomo .fomo-bg{opacity:1;background:radial-gradient(ellipse at 50% 0%,rgba(239,68,68,.12) 0%,transparent 60%)}
+
+.fomo-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+.fomo-track{display:flex;gap:6px;margin-bottom:14px;position:relative;z-index:1}
+.fseg{flex:1;padding:12px 6px;border-radius:var(--rs);cursor:pointer;text-align:center;border:1.5px solid transparent;transition:transform .15s,border-color .2s;position:relative;overflow:hidden}
+.fseg::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;background:inherit}
+.fseg:hover{transform:translateY(-3px)}
+.fseg:active{transform:scale(.96)}
+.fseg.active{border-color:rgba(255,255,255,.3)}
+.fseg.s0{background:rgba(34,197,94,.08);color:var(--green)}
+.fseg.s0.active{box-shadow:0 0 0 1px rgba(34,197,94,.3),0 4px 20px rgba(34,197,94,.25);animation:float 2.5s ease-in-out infinite}
+.fseg.s1{background:rgba(99,102,241,.08);color:#818cf8}
+.fseg.s1.active{box-shadow:0 0 0 1px rgba(99,102,241,.3),0 4px 20px rgba(99,102,241,.2);animation:float 2s ease-in-out infinite}
+.fseg.s2{background:rgba(245,158,11,.08);color:var(--amber)}
+.fseg.s2.active{box-shadow:0 0 0 1px rgba(245,158,11,.3),0 4px 20px rgba(245,158,11,.2)}
+.fseg.s3{background:rgba(239,68,68,.08);color:var(--red)}
+.fseg.s3.active{box-shadow:0 0 0 1px rgba(239,68,68,.4),0 4px 28px rgba(239,68,68,.35);animation:glow-red 1s infinite}
+.fseg-icon{font-size:20px;margin-bottom:5px;display:block}
+.fseg-label{font-size:11px;font-weight:600;letter-spacing:.03em}
+
+.fomo-msg{font-size:13px;line-height:1.65;padding:14px 16px;border-radius:var(--rs);background:var(--bg3);color:var(--t3);font-style:italic;min-height:56px;border:.5px solid transparent;transition:color .4s,border-color .4s,background .4s;position:relative;z-index:1}
+.fomo-msg.on{font-style:normal;color:var(--t1)}
+.fomo-msg.s-calm{border-color:rgba(34,197,94,.2);color:rgba(34,197,94,.9);background:rgba(34,197,94,.05)}
+.fomo-msg.s-focus{border-color:rgba(99,102,241,.2);color:#a5b4fc;background:rgba(99,102,241,.05)}
+.fomo-msg.s-imp{border-color:rgba(245,158,11,.2);color:#fbbf24;background:rgba(245,158,11,.05)}
+.fomo-msg.s-fomo{border-color:rgba(239,68,68,.3);color:#f87171;background:rgba(239,68,68,.06);animation:fomo-text .9s ease-in-out infinite}
+
+/* ══ SIGNALS ══ */
+.sigs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:2.5rem;animation:fadeUp .4s .25s ease both}
+.sig{border-radius:var(--r);padding:16px;transition:transform .2s}
+.sig:hover{transform:translateY(-2px)}
+.sig.go{background:rgba(34,197,94,.04);border:.5px solid rgba(34,197,94,.18)}
+.sig.stop{background:rgba(239,68,68,.04);border:.5px solid rgba(239,68,68,.18)}
+.sig.wait{background:rgba(245,158,11,.04);border:.5px solid rgba(245,158,11,.18)}
+.sig-head{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px}
+.sig.go .sig-head{color:var(--green)}.sig.stop .sig-head{color:var(--red)}.sig.wait .sig-head{color:var(--amber)}
+.sitem{font-size:12px;color:var(--t2);margin-bottom:6px;display:flex;align-items:flex-start;gap:7px;line-height:1.4}
+.sdot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.sig.go .sdot{background:var(--green)}.sig.stop .sdot{background:var(--red)}.sig.wait .sdot{background:var(--amber)}
+
+/* ══ CYCLE ══ */
+.cycle{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:2.5rem;animation:fadeUp .4s .28s ease both}
+.cycle-steps{display:flex;position:relative}
+.cstep{flex:1;text-align:center;padding:0 4px;position:relative}
+.cstep:not(:last-child)::after{content:'';position:absolute;right:-6px;top:22px;width:12px;height:1px;background:var(--border-s)}
+.ccirc{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin:0 auto 8px;line-height:1.3;text-align:center;transition:transform .2s,box-shadow .2s}
+.cstep:hover .ccirc{transform:scale(1.1)}
+.cs-ok .ccirc{background:rgba(34,197,94,.08);border:1.5px solid rgba(34,197,94,.2);color:var(--green)}
+.cs-ok:hover .ccirc{box-shadow:0 0 16px rgba(34,197,94,.3)}
+.cs-warn .ccirc{background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.2);color:var(--amber)}
+.cs-warn:hover .ccirc{box-shadow:0 0 16px rgba(245,158,11,.25)}
+.cs-bad .ccirc{background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.2);color:var(--red)}
+.cs-bad:hover .ccirc{box-shadow:0 0 16px rgba(239,68,68,.3)}
+.ctext{font-size:11px;color:var(--t3);line-height:1.4}
+.cycle-alert{margin-top:14px;padding:11px 16px;background:rgba(245,158,11,.06);border:.5px solid rgba(245,158,11,.2);border-radius:var(--rs);font-size:12px;color:#fbbf24;text-align:center}
+
+/* ══ MANTRAS ══ */
+.mantras{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:2.5rem;animation:fadeUp .4s .3s ease both}
+.mantra{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:18px;transition:border-color .2s,transform .2s;position:relative;overflow:hidden}
+.mantra::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transform-origin:bottom;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.mantra:hover{border-color:var(--border-s);transform:translateY(-2px)}
+.mantra:hover::before{transform:scaleY(1)}
+.mantra.full{grid-column:1/-1}
+.m-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);margin-bottom:8px;letter-spacing:.05em}
+.m-text{font-size:14px;font-weight:500;color:var(--t1);line-height:1.5;margin-bottom:6px}
+.m-why{font-size:12px;color:var(--t3);line-height:1.5}
+
+/* ══ NOTES — DARK ══ */
+.notes-block{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:2.5rem;transition:border-color .25s;animation:fadeUp .4s .32s ease both}
+.notes-block:focus-within{border-color:rgba(167,139,250,.3)}
+.notes-area{width:100%;background:var(--bg);border:.5px solid var(--border-s);border-radius:var(--rs);padding:12px 14px;color:var(--t2);font-size:13px;font-family:'Inter',sans-serif;line-height:1.7;min-height:90px;resize:vertical;outline:none;transition:border-color .2s,color .2s,background .2s}
+.notes-area::placeholder{color:var(--t3);font-style:italic}
+.notes-area:focus{border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.03);color:var(--t1)}
+
+/* ══ ACTIONS ══ */
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:2.5rem;animation:fadeUp .4s .34s ease both}
+.btn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-family:'Inter',sans-serif;padding:9px 16px;border-radius:var(--rs);cursor:pointer;border:.5px solid var(--border-s);background:var(--bg2);color:var(--t2);transition:all .15s;position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.03);opacity:0;transition:opacity .15s}
+.btn:hover{background:var(--bg4);color:var(--t1);transform:translateY(-1px)}
+.btn:hover::after{opacity:1}
+.btn:active{transform:scale(.97)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.btn.primary{background:rgba(167,139,250,.1);color:var(--accent);border-color:rgba(167,139,250,.22)}
+.btn.primary:hover{background:rgba(167,139,250,.18)}
+.btn.danger{border-color:rgba(239,68,68,.22);color:var(--red)}
+.btn.danger:hover{background:rgba(239,68,68,.08)}
+.btn.reset{color:var(--t3)}
+
+/* ══ BOTTOM ══ */
+.bottom{display:flex;align-items:center;justify-content:space-between;padding-top:1.5rem;border-top:.5px solid var(--border)}
+.score-big{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:400;color:var(--t1);line-height:1}
+.score-sub{font-size:11px;color:var(--t3);margin-top:4px}
+.bottom-note{font-size:12px;color:var(--t3);text-align:right;line-height:1.7}
+
+/* ══ DIVIDER ══ */
+hr{border:none;border-top:.5px solid var(--border);margin:2.5rem 0}
+
+/* ══ EDIT ══ */
+[contenteditable]{outline:none;cursor:text}
+[contenteditable]:focus{background:rgba(167,139,250,.06);border-radius:4px;outline:1.5px solid rgba(167,139,250,.25);padding:1px 4px;margin:-1px -4px}
+
+@media(max-width:600px){.checklist,.sigs,.mantras{grid-template-columns:1fr}.mantra.full{grid-column:auto}.cycle-steps{flex-direction:column;gap:12px}.cstep::after{display:none}.header{flex-direction:column;gap:12px}.header-right{text-align:left}}
+</style>
+</head>
+<body>
+
+<!-- ANIMATED CANVAS BACKGROUND -->
+<canvas id="bg-canvas"></canvas>
+
+<div class="shell">
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="logo-row">
+      <div class="live-dot" id="live-dot"></div>
+      <h1>Rituel pré-session</h1>
+    </div>
+    <div class="header-sub" id="date-disp">MNQ — chargement...</div>
+  </div>
+  <div class="header-right">
+    <div class="session-badge">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Session MNQ
+    </div><br>
+    <span class="ready-pill" id="ready-pill">Non prêt</span>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-wrap">
+  <div class="prog-header">
+    <div class="prog-label">Critères validés</div>
+    <div class="prog-score" id="prog-score">0 / 6</div>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="sl">Check-list obligatoire</div>
+<div class="checklist" id="checklist">
+  <div class="ci" onclick="toggle(this,0)">
+    <div class="ci-head"><div class="ci-box"></div><div class="ci-title" contenteditable onclick="e(event)">Il est 9h49 ou plus tard</div></div>
+    <div class="ci-desc" contenteditable onclick="e(event)">Zéro entrée avant ce signal. Même si le setup semble parfait. Même si le prix bouge.</div>
+  </div>
+  <div class="ci" onclick="toggle(this,1)">
+    <div class="ci-head"><div class="ci-box"></div><div class="ci-title" contenteditable onclick="e(event)">J'ai une DoL claire identifiée</div></div>
+    <div class="ci-desc" contenteditable onclick="e(event)">Direction de liquidité nette sur HTF. Pas de "peut-être". Oui ou non.</div>
+  </div>
+  <div class="ci" onclick="toggle(this,2)">
+    <div class="ci-head"><div class="ci-box"></div><div class="ci-title" contenteditable onclick="e(event)">Setup qualité ≥ 4 confirmé</div></div>
+    <div class="ci-desc" contenteditable onclick="e(event)">CISD + FVG + MSS alignés. Si j'hésite sur la qualité, c'est un 3 → pas de trade.</div>
+  </div>
+  <div class="ci" onclick="toggle(this,3)">
+    <div class="ci-head"><div class="ci-box"></div><div class="ci-title" contenteditable onclick="e(event)">SL placé sur la structure d'abord</div></div>
+    <div class="ci-desc" contenteditable onclick="e(event)">Je place le SL sur le niveau PDA/STL/OB. Le nombre de contrats suit. Jamais l'inverse.</div>
+  </div>
+  <div class="ci" onclick="toggle(this,4)">
+    <div class="ci-head"><div class="ci-box"></div><div class="ci-title" contenteditable onclick="e(event)">Je ne trade pas pour me prouver quelque chose</div></div>
+    <div class="ci-desc" contenteditable onclick="e(event)">Si l'envie de trader est plus forte que le signal → pas de trade. L'envie est un signal d'alarme.</div>
+  </div>
+  <div class="ci" onclick="toggle(this,5)">
+    <div class="ci-head"><div class="ci-box"></div><div class="ci-title" contenteditable onclick="e(event)">Pas de loss déjà prise aujourd'hui</div></div>
+    <div class="ci-desc" contenteditable onclick="e(event)">1 trade par jour max. Si j'ai perdu ce matin → chart fermé. Journée terminée.</div>
+  </div>
+</div>
+
+<div class="ready-banner" id="ready-banner">
+  <div class="rb-title">✓ Prêt à trader — edge validé</div>
+  <div class="rb-sub">Tu as coché tous les critères. Execute proprement. Le résultat est une conséquence, pas un verdict.</div>
+</div>
+
+<hr>
+
+<!-- FOMO -->
+<div class="sl">Thermomètre émotionnel</div>
+<div class="fomo-block" id="fomo-block">
+  <div class="fomo-bg" id="fomo-bg"></div>
+  <div class="fomo-label">Comment je me sens maintenant — sois honnête</div>
+  <div class="fomo-track">
+    <div class="fseg s0" onclick="setFomo(0)"><span class="fseg-icon">◎</span><span class="fseg-label">Calme</span></div>
+    <div class="fseg s1" onclick="setFomo(1)"><span class="fseg-icon">◈</span><span class="fseg-label">Attentif</span></div>
+    <div class="fseg s2" onclick="setFomo(2)"><span class="fseg-icon">◉</span><span class="fseg-label">Impatient</span></div>
+    <div class="fseg s3" onclick="setFomo(3)"><span class="fseg-icon">⬤</span><span class="fseg-label">FOMO</span></div>
+  </div>
+  <div class="fomo-msg" id="fomo-msg">Clique sur ton état mental avant d'ouvrir ton chart.</div>
+</div>
+
+<hr>
+
+<!-- SIGNALS -->
+<div class="sl">Signaux GO / STOP / ATTENDRE</div>
+<div class="sigs">
+  <div class="sig go">
+    <div class="sig-head">▶ Entre maintenant</div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>9h49+ confirmé</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>DoL nette HTF</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Setup ≥ 4 + confluence</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>SL sur structure</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Calme / observateur</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Premier trade du jour</span></div>
+  </div>
+  <div class="sig stop">
+    <div class="sig-head">■ Ferme le chart</div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Prix parti sans toi</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Tu as déjà eu une loss</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Tu ressens du FOMO</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Avant 9h49</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>"Envie" de trader</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Setup ≤ 3</span></div>
+  </div>
+  <div class="sig wait">
+    <div class="sig-head">⏸ Attends encore</div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>DoL peu claire</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Confluences incomplètes</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Tu hésites sur la qualité</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>SL pas sur niveau clé</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Tu te demandes si c'est bon</span></div>
+    <div class="sitem"><span class="sdot"></span><span contenteditable>Marché en range</span></div>
+  </div>
+</div>
+
+<hr>
+
+<!-- CYCLE -->
+<div class="sl">Ton cycle d'erreur</div>
+<div class="cycle">
+  <div class="cycle-steps">
+    <div class="cstep cs-ok"><div class="ccirc">Analyse OK</div><div class="ctext">Bonne lecture pre-market</div></div>
+    <div class="cstep cs-warn"><div class="ccirc">Tension monte</div><div class="ctext">Prix bouge sans toi</div></div>
+    <div class="cstep cs-warn"><div class="ccirc">Micro-ratio</div><div class="ctext">"C'est si clair…"</div></div>
+    <div class="cstep cs-bad"><div class="ccirc">Entrée hors plan</div><div class="ctext">Trop tôt, SL serré</div></div>
+    <div class="cstep cs-bad"><div class="ccirc">Stop out</div><div class="ctext">Prix continue après</div></div>
+    <div class="cstep cs-ok"><div class="ccirc">Journal lucide</div><div class="ctext">Tu sais pourquoi. Retour à 1.</div></div>
+  </div>
+  <div class="cycle-alert">Si tu reconnais être à l'étape 2 ou 3 → ferme le chart maintenant, pas dans 30 secondes.</div>
+</div>
+
+<hr>
+
+<!-- MANTRAS -->
+<div class="sl">Les 5 mantras — lis à voix haute</div>
+<div class="mantras">
+  <div class="mantra"><div class="m-num">01</div><div class="m-text" contenteditable>"Le trade raté est du capital mental préservé."</div><div class="m-why" contenteditable>Chaque trade non-pris qui n'était pas A+ = argent économisé.</div></div>
+  <div class="mantra"><div class="m-num">02</div><div class="m-text" contenteditable>"L'envie de trader est un signal d'alarme, pas d'entrée."</div><div class="m-why" contenteditable>Si tu ressens l'urgence → c'est FOMO. Ferme le chart.</div></div>
+  <div class="mantra"><div class="m-num">03</div><div class="m-text" contenteditable>"Je n'exécute pas pour gagner. J'exécute mon processus."</div><div class="m-why" contenteditable>Le résultat est une conséquence, pas un verdict sur ta valeur.</div></div>
+  <div class="mantra"><div class="m-num">04</div><div class="m-text" contenteditable>"Structure d'abord. SL ensuite. Contrats en dernier."</div><div class="m-why" contenteditable>L'ordre de ces 3 étapes détermine la qualité du trade.</div></div>
+  <div class="mantra full"><div class="m-num">05</div><div class="m-text" contenteditable>"Mon edge est prouvé. Je dois juste l'attendre."</div><div class="m-why" contenteditable>5 trades A+ = 5 profits, 100% win rate. L'edge existe. Le seul travail est l'attente.</div></div>
+</div>
+
+<hr>
+
+<!-- NOTES -->
+<div class="sl">Notes pre-market du jour</div>
+<div class="notes-block">
+  <textarea class="notes-area" placeholder="Écris ton analyse du jour : DoL identifiée, niveaux clés, biais HTF, ce que tu attends comme setup..."></textarea>
+</div>
+
+<hr>
+
+<!-- ACTIONS -->
+<div class="sl">Actions rapides</div>
+<div class="actions">
+  <button class="btn" onclick="oc('Analyse ce trade que je viens de faire et dis-moi quelle erreur du plan j ai commise : ')">
+    <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Analyser un trade
+  </button>
+  <button class="btn" onclick="oc('J ai ressenti du FOMO aujourd hui, aide moi à comprendre ce qui s est passé dans ma tête et comment l éviter la prochaine fois')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>Debriefing FOMO
+  </button>
+  <button class="btn danger" onclick="oc('J ai fait une loss aujourd hui, aide moi à identifier l erreur exacte et à éviter de la répéter')">
+    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Débriefing loss
+  </button>
+  <button class="btn primary" onclick="oc('Donne moi un résumé rapide de mes 3 erreurs les plus récurrentes et un rappel du plan d action pour chacune')">
+    <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>Rappel erreurs
+  </button>
+  <button class="btn reset" onclick="resetAll()">
+    <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Nouvelle session
+  </button>
+</div>
+
+<!-- BOTTOM -->
+<div class="bottom">
+  <div><div class="score-big" id="score-big">0/6</div><div class="score-sub">critères validés</div></div>
+  <div class="bottom-note">Tous cochés = tu peux trader<br>1 seul manquant = tu attends</div>
+</div>
+
+</div><!-- /shell -->
+
+<script>
+/* ═══ CANVAS PARTICLES ═══ */
+(function(){
+  var c=document.getElementById('bg-canvas');
+  var ctx=c.getContext('2d');
+  var W,H,pts=[],lines=[];
+  var STATE={r:0,g:0,b:0,a:.0};
+  var TARGET={r:0,g:0,b:0,a:.0};
+  var COLORS={
+    neutral:{r:99,g:102,b:241,a:.55},
+    calm:{r:34,g:197,b:94,a:.55},
+    focus:{r:99,g:102,b:241,a:.65},
+    imp:{r:245,g:158,b:11,a:.6},
+    fomo:{r:239,g:68,b:68,a:.7}
+  };
+  window._setCanvasState=function(k){TARGET=COLORS[k]||COLORS.neutral};
+
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;init()}
+  function init(){
+    pts=[];
+    var n=Math.floor(W*H/18000);
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28,r:Math.random()*1.5+.5});
+  }
+  function lerp(a,b,t){return a+(b-a)*t}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    STATE.r=lerp(STATE.r,TARGET.r,.018);
+    STATE.g=lerp(STATE.g,TARGET.g,.018);
+    STATE.b=lerp(STATE.b,TARGET.b,.018);
+    STATE.a=lerp(STATE.a,TARGET.a,.018);
+    var cr=Math.round(STATE.r),cg=Math.round(STATE.g),cb=Math.round(STATE.b);
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i];
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba('+cr+','+cg+','+cb+','+(STATE.a*.9)+')';
+      ctx.fill();
+      for(var j=i+1;j<pts.length;j++){
+        var q=pts[j];
+        var dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle='rgba('+cr+','+cg+','+cb+','+(STATE.a*(1-d/120)*.35)+')';
+          ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();
+  draw();
+  _setCanvasState('neutral');
+})();
+
+/* ═══ CHECKLIST ═══ */
+var checked=[false,false,false,false,false,false];
+function e(ev){ev.stopPropagation()}
+function toggle(el,i){
+  if(event.target.closest('[contenteditable]'))return;
+  checked[i]=!checked[i];
+  el.classList.toggle('done',checked[i]);
+  updateProg();
+}
+function updateProg(){
+  var n=checked.filter(Boolean).length;
+  document.getElementById('prog-fill').style.width=Math.round(n/6*100)+'%';
+  document.getElementById('prog-score').textContent=n+' / 6';
+  document.getElementById('score-big').textContent=n+'/6';
+  var ok=n===6;
+  document.getElementById('ready-banner').classList.toggle('show',ok);
+  var dot=document.getElementById('live-dot');
+  dot.classList.toggle('ok',ok);
+  var pill=document.getElementById('ready-pill');
+  pill.textContent=ok?'Prêt à trader':'Non prêt';
+  pill.classList.toggle('ok',ok);
+  if(ok)_setCanvasState('calm');
+  else if(window._lastFomo>=0)_setCanvasState(['calm','focus','imp','fomo'][window._lastFomo]);
+  else _setCanvasState('neutral');
+}
+
+/* ═══ FOMO ═══ */
+var fTexts=[
+  "Etat idéal. Tu es dans l'observation froide. Chaque signal est analysé sans émotion. C'est ici que les bons trades naissent. Reste dans cet état.",
+  "Légère activation. Tu commences à t'intéresser à ce que le marché fait. Reste observateur. Ne te précipite pas — le setup n'est peut-être pas encore là.",
+  "Danger. Ton cerveau émotionnel s'active. STOP. Est-ce que tous mes critères sont cochés ? Si non → mains loin du clavier.",
+  "ALERTE ROUGE. C'est l'état dans lequel tu fais tes pires trades. L'urgence que tu ressens est exactement ce que tu ne dois PAS suivre. Ferme le chart immédiatement."
+];
+var fStates=['s-calm','s-focus','s-imp','s-fomo'];
+var fCanvas=['calm','focus','imp','fomo'];
+window._lastFomo=-1;
+
+function setFomo(i){
+  document.querySelectorAll('.fseg').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.fseg')[i].classList.add('active');
+  var b=document.getElementById('fomo-block');
+  fStates.forEach(function(c){b.classList.remove(c)});b.classList.add(fStates[i]);
+  var m=document.getElementById('fomo-msg');
+  fStates.forEach(function(c){m.classList.remove(c)});
+  m.classList.add('on',fStates[i]);
+  m.textContent=fTexts[i];
+  _setCanvasState(fCanvas[i]);
+  window._lastFomo=i;
+  if(i===3){document.querySelector('.fomo-block').style.animation='fomo-border 1.2s ease-in-out infinite';}
+  else{document.querySelector('.fomo-block').style.animation='';}
+}
+
+/* ═══ UTILS ═══ */
+function resetAll(){
+  checked=[false,false,false,false,false,false];
+  document.querySelectorAll('.ci').forEach(function(el){el.classList.remove('done')});
+  document.querySelectorAll('.fseg').forEach(function(s){s.classList.remove('active')});
+  var b=document.getElementById('fomo-block');fStates.forEach(function(c){b.classList.remove(c)});
+  var m=document.getElementById('fomo-msg');fStates.forEach(function(c){m.classList.remove(c)});
+  m.classList.remove('on');m.textContent='Clique sur ton état mental avant d\'ouvrir ton chart.';
+  document.querySelector('.fomo-block').style.animation='';
+  window._lastFomo=-1;_setCanvasState('neutral');
+  updateProg();
+}
+function oc(msg){window.open('https://claude.ai/new?q='+encodeURIComponent(msg),'_blank')}
+
+/* ═══ DATE ═══ */
+(function(){
+  var d=new Date();
+  var D=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  var M=['jan','fév','mars','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+  var h=d.getHours().toString().padStart(2,'0');
+  var m=d.getMinutes().toString().padStart(2,'0');
+  document.getElementById('date-disp').textContent=D[d.getDay()]+' '+d.getDate()+' '+M[d.getMonth()]+' — '+h+':'+m;
+})();
+</script>
+</body>
+</html>
